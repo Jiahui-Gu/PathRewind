@@ -3,7 +3,7 @@
     "name": "Path Rewind / 路径回溯",
     "author_list": ["PathRewind"],
     "description": "Click any visited node on the map to rewind! / 点击地图上已走过的节点即可回溯！",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "sts_version": "12-22-2020",
     "mts_version": "3.30.0",
     "dependencies": ["basemod"]

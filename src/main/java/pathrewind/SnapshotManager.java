@@ -256,6 +256,7 @@ public class SnapshotManager {
             }
             AbstractPlayer.PlayerClass pc = AbstractDungeon.player.chosenClass;
             CardCrawlGame.chosenCharacter = pc;
+            RewindAudioReset.prepareForRewindReload();
             CardCrawlGame.loadingSave = true;
             CardCrawlGame.mode = CardCrawlGame.GameMode.CHAR_SELECT;
 
