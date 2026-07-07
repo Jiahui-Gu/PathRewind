@@ -7,6 +7,9 @@ target/
 # Local smoke-test scratch file
 test_write.txt
 
+# Slay the Spire writes diagnostic logs here when tests load game classes.
+sendToDevs/
+
 # Steam upload metadata contains machine-local paths; generated jars belong in releases.
 workshop/*.vdf
 workshop/content/
