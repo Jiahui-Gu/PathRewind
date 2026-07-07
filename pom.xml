@@ -38,6 +38,12 @@
             <scope>system</scope>
             <systemPath>D:\Program Files (x86)\Steam\steamapps\workshop\content\646570\1605060445\ModTheSpire.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
