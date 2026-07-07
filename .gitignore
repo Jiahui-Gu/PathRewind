@@ -1,6 +1,9 @@
 target/
 *.class
 
+# Local git worktrees
+.worktrees/
+
 # Local smoke-test scratch file
 test_write.txt
 
