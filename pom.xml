@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pathrewind</groupId>
+    <artifactId>PathRewind</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <SlayTheSpire.path>D:\Program Files (x86)\Steam\steamapps\common\SlayTheSpire</SlayTheSpire.path>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.megacrit.cardcrawl</groupId>
+            <artifactId>slay-the-spire</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${SlayTheSpire.path}\desktop-1.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>basemod</groupId>
+            <artifactId>BaseMod</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>D:\Program Files (x86)\Steam\steamapps\workshop\content\646570\1605833019\BaseMod.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.evacipated.cardcrawl</groupId>
+            <artifactId>ModTheSpire</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>D:\Program Files (x86)\Steam\steamapps\workshop\content\646570\1605060445\ModTheSpire.jar</systemPath>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>PathRewind</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>pathrewind.PathRewindMod</Main-Class>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

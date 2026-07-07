@@ -1,0 +1,9 @@
+target/
+*.class
+
+# Local smoke-test scratch file
+test_write.txt
+
+# Steam upload metadata contains machine-local paths; generated jars belong in releases.
+workshop/*.vdf
+workshop/content/
