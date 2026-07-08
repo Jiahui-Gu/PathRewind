@@ -1,7 +1,9 @@
 package pathrewind;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.megacrit.cardcrawl.audio.MusicMaster;
 import com.megacrit.cardcrawl.audio.SoundMaster;
+import com.megacrit.cardcrawl.scenes.AbstractScene;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -9,8 +11,12 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RewindAudioResetTest {
@@ -24,6 +30,59 @@ public class RewindAudioResetTest {
         assertTrue("getLoopingSoundKeysToStop must return a Collection", keys instanceof Collection);
         assertTrue("Rewind audio reset must stop the rest-room fire loop",
                 ((Collection<?>) keys).contains("REST_FIRE_WET"));
+    }
+
+    @Test
+    public void stopsDungeonAmbienceLoopsBeforeRewindReload() throws Exception {
+        Class<?> resetClass = Class.forName("pathrewind.RewindAudioReset");
+
+        Method keysMethod = resetClass.getDeclaredMethod("getLoopingSoundKeysToStop");
+        keysMethod.setAccessible(true);
+        Object keys = keysMethod.invoke(null);
+
+        assertTrue("Rewind audio reset must stop Exordium ambience loops",
+                ((Collection<?>) keys).contains("AMBIANCE_BOTTOM"));
+        assertTrue("Rewind audio reset must stop City ambience loops",
+                ((Collection<?>) keys).contains("AMBIANCE_CITY"));
+        assertTrue("Rewind audio reset must stop Beyond ambience loops",
+                ((Collection<?>) keys).contains("AMBIANCE_BEYOND"));
+        assertTrue("Rewind audio reset must stop the map wind loop",
+                ((Collection<?>) keys).contains("WIND"));
+    }
+
+    @Test
+    public void fadesOutProvidedSceneAmbienceBeforeRewindReload() throws Exception {
+        CountingScene scene = uninitialized(CountingScene.class);
+
+        RewindAudioReset.fadeOutCurrentSceneAmbiance(scene);
+
+        assertEquals("Rewind audio reset must fade out current scene ambience",
+                1, scene.fadeOutAmbianceCalls);
+    }
+
+    @Test
+    public void injectedRewindReloadAudioResetMatchesGameCleanupPath() throws Exception {
+        List<String> cleanupEvents = new ArrayList<String>();
+        CountingScene scene = uninitialized(CountingScene.class);
+        RecordingSoundMaster sound = uninitialized(RecordingSoundMaster.class);
+        RecordingMusicMaster music = uninitialized(RecordingMusicMaster.class);
+        scene.cleanupEvents = cleanupEvents;
+        sound.cleanupEvents = cleanupEvents;
+        music.cleanupEvents = cleanupEvents;
+
+        RewindAudioReset.prepareForRewindReload(scene, sound, music);
+
+        assertEquals("Rewind audio reset should clean scene ambience, looping sounds, and music",
+                Arrays.asList(
+                        "scene:fade-out-ambiance",
+                        "sound:REST_FIRE_WET",
+                        "sound:AMBIANCE_BOTTOM",
+                        "sound:AMBIANCE_CITY",
+                        "sound:AMBIANCE_BEYOND",
+                        "sound:WIND",
+                        "music:silence-temp-bgm",
+                        "music:fade-all"),
+                cleanupEvents);
     }
 
     @Test
@@ -83,6 +142,62 @@ public class RewindAudioResetTest {
         @Override
         public void fadeAll() {
             throw new RuntimeException("simulated music failure");
+        }
+    }
+
+    private static class RecordingSoundMaster extends SoundMaster {
+        private List<String> cleanupEvents;
+
+        @Override
+        public void stop(String key) {
+            cleanupEvents.add("sound:" + key);
+        }
+    }
+
+    private static class RecordingMusicMaster extends MusicMaster {
+        private List<String> cleanupEvents;
+
+        @Override
+        public void silenceTempBgmInstantly() {
+            cleanupEvents.add("music:silence-temp-bgm");
+        }
+
+        @Override
+        public void fadeAll() {
+            cleanupEvents.add("music:fade-all");
+        }
+    }
+
+    private static class CountingScene extends AbstractScene {
+        private int fadeOutAmbianceCalls;
+        private List<String> cleanupEvents;
+
+        private CountingScene() {
+            super("unused");
+        }
+
+        @Override
+        public void fadeOutAmbiance() {
+            fadeOutAmbianceCalls++;
+            if (cleanupEvents != null) {
+                cleanupEvents.add("scene:fade-out-ambiance");
+            }
+        }
+
+        @Override
+        public void renderCombatRoomBg(SpriteBatch sb) {
+        }
+
+        @Override
+        public void renderCombatRoomFg(SpriteBatch sb) {
+        }
+
+        @Override
+        public void renderCampfireRoom(SpriteBatch sb) {
+        }
+
+        @Override
+        public void randomizeScene() {
         }
     }
 }
